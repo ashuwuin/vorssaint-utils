@@ -850,6 +850,7 @@ enum DefaultsKey {
     static let notchAccessoriesEnabled = "notchAccessoriesEnabled"
     static let notchLyricsEnabled = "notchLyricsEnabled"
     static let notchLyricsOnline = "notchLyricsOnline"
+    static let notchLyricsBelowIsland = "notchLyricsBelowIsland"
     static let notchBrowserCovers = "notchBrowserCovers"
     static let notchLiveEqualizer = "notchLiveEqualizer"
     static let notchQueueEnabled = "notchQueueEnabled"
@@ -1478,6 +1479,7 @@ enum Defaults {
         DefaultsKey.notchAgentsPriceUpdates: true,
         DefaultsKey.notchLyricsEnabled: true,
         DefaultsKey.notchLyricsOnline: false,
+        DefaultsKey.notchLyricsBelowIsland: true,
         DefaultsKey.notchBrowserCovers: false,
         DefaultsKey.notchLiveEqualizer: false,
         DefaultsKey.notchQueueEnabled: true,
