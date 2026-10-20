@@ -1268,11 +1268,6 @@ MUTATIONS = [
      "Sources/Vorssaint/Services/QuitProtection/QuitProtectionService.swift",
      "confirmedWithExtraModifier: modifier != nil", "confirmedWithExtraModifier: false",
      "the confirmation tells the forwarding rule whether the extra modifier is still held"),
-    ("new wheel input keeps the previous pane's glide budget", "pointer-input",
-     "Sources/Vorssaint/Services/SmoothScrollService.swift",
-     "|| glideFromContinuous != traits.isContinuous || retargeted {",
-     "|| glideFromContinuous != traits.isContinuous {",
-     "fresh input in another pane drops the old tail and fractional carry immediately"),
     ("hover hands focus between a window and its own suggestion list", "pointer-input",
      "Sources/Vorssaint/Services/FocusFollowsMouse/FocusFollowsMouseSupport.swift",
      "            && !focusedWindowSharesRoot\n", "\n",
@@ -1401,6 +1396,11 @@ MUTATIONS = [
      "answerHandlers = whenAnswered.map { [cacheKey: $0] } ?? [:]",
      "if let whenAnswered { answerHandlers = [cacheKey: whenAnswered] }",
      "Return on a row that shows its own answer takes over from a script still running"),
+    ("a mirroring display's brightness overlay looks only for its own screen", "display-restoration",
+     "Sources/Vorssaint/Services/Display/BrightnessOSD.swift",
+     "return number == displayID || number == sharedScreenID || number == mirroredID",
+     "return number == displayID",
+     "a mirroring display's brightness overlay shows on the screen its mirror set shares"),
 ]
 
 
