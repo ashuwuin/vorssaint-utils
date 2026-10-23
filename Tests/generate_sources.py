@@ -91,6 +91,15 @@ def main():
           + declaration(recorder, "    func captureEngine(_ engine: RecorderCaptureEngine,\n")
           + "}\n}\n")
     watch = "Sources/Vorssaint/Services/Notch/NotchWatchService.swift"
+    artwork = "Sources/Vorssaint/Services/Notch/NotchBrowserArtwork.swift"
+    write("NotchBrowserArtworkLifecycle.swift", "import Foundation\n"
+          + "extension NotchBrowserArtworkLifecycleTests {\nfinal class Service: Fixture {\n"
+          + "".join(declaration(artwork, prefix).replace("    private ", "    ", 1)
+                    for prefix in ["    private struct Lookup {", "    func artwork(", "    func request(",
+                                   "    func cancel()", "    private func accepts(", "    private func load(",
+                                   "    private func attempt(", "    private func retry(",
+                                   "    private func store(", "    private func finish(", "    private func download("])
+          + "}\n}\n")
     write("NotchWatchChoice.swift", "import AppKit\nimport Foundation\n"
           + "extension NotchWatchChoiceTests {\nfinal class Service: Fixture {\n"
           + declaration(watch, "    func chooseArea()")
@@ -189,7 +198,8 @@ def main():
               "    func windowShouldClose(", "    func windowWillClose(", "    private func markOnboardingComplete()",
               "    private func markSupportUpdateIntroSeenIfCurrentUpdate()", "    private func markSupportUpdateIntroSeen()",
               "    private func queueWhatsNewIfNeeded(", "    private func showWhatsNewIfNeeded()",
-              "    private func markWhatsNewSeen()"])
+              "    private func markWhatsNewSeen()", "    private func keepUpdateWindowReachable(",
+              "    private func restoreSettingsLevelAfterWhatsNew()"])
           + "}\n}\n")
     write("PostUpdateStatusItemRecovery.swift", "import AppKit\nimport Foundation\n"
           + "extension PostUpdateStatusItemRecoveryTests {\nfinal class Host: Fixture {\n"
@@ -356,6 +366,22 @@ def main():
                         "final class NotchAudioLevelService:")
           + "}\n")
     clipboard = "Sources/Vorssaint/Services/Clipboard/ClipboardHistoryService.swift"
+    pending_restore = [line for line in (ROOT / clipboard).read_text().splitlines(keepends=True)
+                       if line.startswith("    private var pendingRestore:")]
+    if len(pending_restore) != 1:
+        raise ValueError("Expected one pending clipboard restore declaration")
+    write("ClipboardCaptureRestore.swift", "import AppKit\nimport Foundation\nimport Combine\n"
+          + "extension ClipboardCaptureRestoreTests {\nfinal class Service: Fixture {\n"
+          + pending_restore[0].replace("private ", "", 1)
+          + declaration(clipboard, "    @Published private(set) var entries:")
+          + "".join(declaration(clipboard, prefix).replace("private ", "", 1) for prefix in [
+              "    private enum CapturedContent", "    private func captureIfChanged(",
+              "    private static func readPasteboard(", "    private func matchingEntry(",
+              "    private func stop()", "    private func promote(", "    private func touch(",
+              "    private var firstRecentIndex:", "    private func normalizeEntryOrder(",
+              "    private func insertPromoted("])
+          + "func setEntries(_ values: [ClipboardHistoryEntry]) { entries = values }\n"
+          + "}\n}\n")
     write("ClipboardPreview.swift", "import Foundation\nimport Combine\n"
           + "extension ClipboardPreviewContract {\nfinal class Service: Fixture {\n"
           + declaration(clipboard, "    @Published private(set) var entries:")
@@ -1708,6 +1734,14 @@ def main():
           + "}\n}\n")
 
     music = "Sources/Vorssaint/Services/Notch/NotchMusicService.swift"
+    write("NotchMusicArtworkReply.swift", "import AppKit\n"
+          + "extension NotchMusicArtworkReplyTests {\nfinal class Service: Fixture {\n"
+          + declaration(music, "    private struct Reading {").replace("private struct", "struct", 1)
+          + "func makeReader() -> NotchMusicPipeReader {\nlet requested = generation\n"
+          + "var playerArtwork: Data?\nvar cachedArtwork: Data?\nvar cachedImage: NSImage?\n"
+          + "var cachedTint: NotchArtworkTint?\n"
+          + declaration(music, "        let reader = NotchMusicPipeReader {")
+          + "return reader\n}\n}\n}\n")
     write("NotchMusicControls.swift", "import AppKit\n\nextension NotchMusicCommandContract {\n"
           + "final class Service {\ntypealias Command = NotchPlaybackCommand\n"
           + "var playback: NotchPlayback?\nvar generation = UUID()\nvar queueRequest: UUID?\n"
